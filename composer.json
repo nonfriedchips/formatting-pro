@@ -1,6 +1,6 @@
 {
-    "name": "zephyrisle/formatting-pro",
-    "description": "Enhanced Flarum formatting extension with audio support, Chinese platforms (NetEase Cloud Music, Bilibili), and custom audio CSS(Fork from fof-formatting)",
+    "name": "nonfriedchips/formatting-pro",
+    "description": "Flarum 1.x formatting enhancements with audio, NetEase Cloud Music, Bilibili embeds, and custom audio CSS",
     "keywords": [
         "flarum",
         "formatting",
@@ -12,18 +12,26 @@
     "type": "flarum-extension",
     "license": "MIT",
     "require": {
-        "php": "^8.3",
-        "flarum/core": "^2.0.0"
+        "php": ">=7.4",
+        "flarum/core": "^1.8",
+        "fof/formatting": "^1.1"
     },
     "support": {
-        "issues": "https://github.com/Zephyr-Isle/formatting-pro/issues",
-        "source": "https://github.com/Zephyr-Isle/formatting-pro"
+        "issues": "https://github.com/nonfriedchips/formatting-pro/issues",
+        "source": "https://github.com/nonfriedchips/formatting-pro"
     },
     "authors": [
         {
             "name": "zephyrisle",
             "email": "zephyrisle@duck.com",
-            "homepage": "https://github.com/Zephyr-Isle"
+            "homepage": "https://github.com/Zephyr-Isle",
+            "role": "Original author"
+        },
+        {
+            "name": "non-fried-chips",
+            "email": "non_fried_chips@buaa.edu.cn",
+            "homepage": "https://github.com/nonfriedchips",
+            "role": "Flarum 1.x compatibility maintainer"
         }
     ],
     "autoload": {
@@ -32,13 +40,9 @@
         }
     },
     "extra": {
-        "branch-alias": {
-            "2.x": "2.x-dev"
-        },
         "flarum-extension": {
-            "title": "Formatting Pro",
+            "title": "Formatting Pro for Flarum 1",
             "category": "feature",
-            "id": "zephyrisle-formatting-pro",
             "icon": {
                 "name": "fas fa-music",
                 "backgroundColor": "#ff6b6b",
@@ -53,17 +57,17 @@
         "database-support": ["mysql", "sqlite", "pgsql"]
     },
     "require-dev": {
-        "flarum/phpstan": "^2.0.0"
+        "flarum/phpstan": "^1.8"
     },
     "scripts": {
+        "test": "php -d error_reporting=22527 tests/formatter.php",
         "analyse:phpstan": "phpstan analyse",
         "clear-cache:phpstan": "phpstan clear-result-cache",
         "build:js": "cd js && npm install && npm run build"
     },
     "scripts-descriptions": {
+        "test": "Run formatter integration tests",
         "analyse:phpstan": "Run static analysis",
         "build:js": "Build JavaScript assets"
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    }
 }

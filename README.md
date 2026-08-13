@@ -1,94 +1,90 @@
-# Formatting Pro (Fork)
+# Formatting Pro for Flarum 1
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg) [![Latest Stable Version](https://img.shields.io/packagist/v/zephyrisle/formatting-pro.svg)](https://packagist.org/packages/zephyrisle/formatting-pro)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
+[![Flarum](https://img.shields.io/badge/flarum-1.8+-orange.svg)](https://flarum.org/)
 
-This is a fork of the original [FriendsOfFlarum/formatting](https://github.com/FriendsOfFlarum/formatting) extension for [Flarum](http://flarum.org), maintained as a separate project with additional audio support, Chinese platform embeds (NetEase Cloud Music, Bilibili), and custom audio CSS.
+A Flarum 1.8-compatible port of
+[Zephyr-Isle/formatting-pro](https://github.com/Zephyr-Isle/formatting-pro).
+It adds direct audio players and embeds for NetEase Cloud Music and Bilibili.
 
-## Fork Notice
-
-This repository is a forked and independently maintained derivative of:
-
-- Original source: [FriendsOfFlarum/formatting](https://github.com/FriendsOfFlarum/formatting)
-- This fork: [Zephyr-Isle/formatting-pro](https://github.com/Zephyr-Isle/formatting-pro)
-
-Please refer to the original repository for upstream source history and the original implementation.
+This package complements, and depends on, `fof/formatting`. It does not replace
+FoF Formatting or remove any of its existing plugins.
 
 ## Features
 
-- **Auto Audio**: Convert audio URLs into HTML5 audio players
-- **NetEase Cloud Music**: Embed content from NetEase Cloud Music (网易云音乐)
-- **Bilibili**: Embed content from Bilibili (哔哩哔哩)
-- **Custom Audio CSS**: Customize the appearance of audio players with custom CSS
+- Convert direct MP3, M4A, OGG/OGA, WAV, FLAC, AAC, and Opus URLs into HTML5
+  audio players.
+- Embed NetEase Cloud Music song, album, and playlist links.
+- Embed Bilibili BV and AV video links, including multi-part `p` links.
+- Add optional custom CSS from the Flarum administration panel.
+- Clear the TextFormatter cache automatically when formatter options change.
+
+## Requirements
+
+- Flarum 1.8.x
+- PHP 7.4 or newer
+- `fof/formatting` 1.1.x
+
+The upstream `zephyrisle/formatting-pro` package targets Flarum 2.x. Use this
+package only for Flarum 1.x installations.
 
 ## Installation
 
-Install with composer:
+This repository is installable directly through Composer:
 
 ```sh
-composer require zephyrisle/formatting-pro
+composer config repositories.formatting-pro vcs https://github.com/nonfriedchips/formatting-pro.git
+composer require nonfriedchips/formatting-pro:^1.0
+php flarum cache:clear
 ```
+
+Enable **Formatting Pro for Flarum 1** in the administration panel, then open
+its settings page to select the formatters you want.
+
+If the package is later registered on Packagist, the first `composer config`
+command is no longer needed.
+
+## Usage
+
+Post a supported URL on its own or alongside other text:
+
+```text
+https://example.com/audio/episode.mp3
+https://music.163.com/#/song?id=123456
+https://www.bilibili.com/video/BV1xx411c7mD?p=2
+```
+
+Previously saved posts are stored as parsed TextFormatter XML. Edit and save an
+old post once if you want newly supported URLs in that post to be reparsed.
 
 ## Updating
 
 ```sh
-composer update zephyrisle/formatting-pro
+composer update nonfriedchips/formatting-pro -W
+php flarum cache:clear
 ```
 
-## Configuration
+## Security notes
 
-After installation, go to the Admin Panel > Extensions > Formatting Pro to configure:
+- Direct audio sources are restricted to HTTP(S) URLs with supported file
+  extensions and pass through TextFormatter's URL filter.
+- Media identifiers are restricted by regular expressions before being placed
+  into fixed HTTPS embed URLs.
+- Custom CSS is an administrator-only setting and is injected verbatim. Only
+  trusted administrators should receive access to Flarum settings.
+- Browser or reverse-proxy Content Security Policy rules must permit frames from
+  `https://music.163.com` and `https://player.bilibili.com`.
 
-1. **Auto Audio**: Enable to convert audio URLs to HTML5 audio players
-2. **NetEase Cloud Music**: Enable to embed NetEase Cloud Music content
-3. **Bilibili**: Enable to embed Bilibili content
-4. **Custom Audio CSS**: Enter custom CSS to style audio players
+## Compatibility and support
 
-## Usage
-
-### Auto Audio
-Simply post an audio URL in a post, and it will be automatically converted to an HTML5 audio player:
-```
-https://example.com/audio.mp3
-```
-
-### NetEase Cloud Music
-Share NetEase Cloud Music links to embed them in posts:
-```
-https://music.163.com/#/song?id=123456
-```
-
-### Bilibili
-Share Bilibili video links to embed them in posts:
-```
-https://www.bilibili.com/video/BV1xx411c7mD
-```
-
-### Custom Audio CSS
-Use the custom CSS field to style audio players. Example:
-```css
-audio {
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  background: #f5f5f5;
-}
-```
-
-## Links
-
-- [Packagist](https://packagist.org/packages/zephyrisle/formatting-pro)
-- [GitHub](https://github.com/Zephyr-Isle/formatting-pro)
-- [Flarum Discuss](https://discuss.flarum.org/)
-
-## Requirements
-
-- Flarum 2.0+
-
-## License
-
-MIT
+This compatibility port intentionally keeps the upstream setting keys and PHP
+namespace so configuration can be migrated more easily. Report issues at
+[nonfriedchips/formatting-pro](https://github.com/nonfriedchips/formatting-pro/issues).
 
 ## Credits
 
-Forked from [FriendsOfFlarum/formatting](https://github.com/FriendsOfFlarum/formatting) by FriendsOfFlarum.
+- [FriendsOfFlarum/formatting](https://github.com/FriendsOfFlarum/formatting)
+- [Zephyr-Isle/formatting-pro](https://github.com/Zephyr-Isle/formatting-pro)
 
-Maintained as a separate fork by [zephyrisle](https://github.com/Zephyr-Isle).
+This independently maintained compatibility port retains the upstream Git
+history and MIT license. It is not an official FriendsOfFlarum extension.

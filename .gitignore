@@ -5,7 +5,6 @@ composer.lock
 # Node
 /node_modules/
 js/node_modules/
-js/package-lock.json
 js/yarn.lock
 
 # IDE

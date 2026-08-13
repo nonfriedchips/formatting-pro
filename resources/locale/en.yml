@@ -1,8 +1,6 @@
 zephyrisle-formatting-pro:
   admin:
     settings:
-      title: Formatting Pro Settings
-      plugins: Format Plugins
       audio_css: Custom Audio CSS
       audio_css_placeholder: "/* Enter custom CSS for audio players here */\naudio {\n  /* Your custom styles */\n}"
       audio_css_help: "Enter custom CSS to style the audio players. This CSS will be applied to all audio elements in the forum."
@@ -10,5 +8,3 @@ zephyrisle-formatting-pro:
       autoaudio: Convert audio URLs into HTML5 audio players
       netease: Embed content from NetEase Cloud Music
       bilibili: Embed content from Bilibili
-    buttons:
-      save: Save Settings

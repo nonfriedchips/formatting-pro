@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of fof/formatting.
+ * This file is part of nonfriedchips/formatting-pro.
  *
- * Copyright (c) FriendsOfFlarum.
+ * Copyright (c) FriendsOfFlarum, Zephyr Isle, and contributors.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -18,8 +18,7 @@ class ClearCache
     public function handle(Saved $event): void
     {
         foreach ($event->settings as $key => $setting) {
-            if (str_starts_with($key, 'zephyrisle-formatting-pro.plugin.') ||
-                str_starts_with($key, 'zephyrisle-formatting-pro.audio_css')) {
+            if (strpos($key, 'zephyrisle-formatting-pro.plugin.') === 0) {
                 resolve('flarum.formatter')->flush();
 
                 return;
