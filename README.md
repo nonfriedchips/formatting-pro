@@ -1,5 +1,7 @@
 # Formatting Pro for Flarum 1
 
+English | [简体中文](README.zh-CN.md)
+
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
 [![Flarum](https://img.shields.io/badge/flarum-1.8+-orange.svg)](https://flarum.org/)
 
