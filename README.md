@@ -22,7 +22,7 @@ FoF Formatting or remove any of its existing plugins.
 ## Requirements
 
 - Flarum 1.8.x
-- PHP 7.4 or newer
+- PHP 8.0 or newer
 - `fof/formatting` 1.1.x
 
 The upstream `zephyrisle/formatting-pro` package targets Flarum 2.x. Use this
