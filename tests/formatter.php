@@ -3,9 +3,12 @@
 declare(strict_types=1);
 
 use Flarum\Settings\SettingsRepositoryInterface;
+use Flarum\Settings\Event\Saved;
 use FoF\Formatting\ConfigureFormatterPlugins;
+use Illuminate\Container\Container;
 use s9e\TextFormatter\Configurator;
 use Zephyrisle\FormattingPro\ConfigureFormatter;
+use Zephyrisle\FormattingPro\Listeners\ClearCache;
 
 require dirname(__DIR__).'/vendor/autoload.php';
 
@@ -131,14 +134,69 @@ $cases = [
     ],
 ];
 
+$renderedCases = [];
+
 foreach ($cases as $name => $case) {
     $xml = $parser->parse($case['url']);
     $html = $renderer->render($xml);
+    $renderedCases[$name] = $html;
 
     assertTrue(strpos($xml, $case['xml']) !== false, "{$name} was not parsed into the expected tag: {$xml}");
     assertTrue(strpos($html, $case['html']) !== false, "{$name} rendered the wrong player: {$html}");
     assertTrue(strpos($html, $case['src']) !== false, "{$name} lost its identifier or URL: {$html}");
 }
+
+assertTrue(
+    preg_match('/<audio[^>]*\\sautoplay(?:=|\\s|>)/i', $renderedCases['audio']) === 0,
+    'direct audio autoplay was enabled by default'
+);
+assertTrue(strpos($renderedCases['netease song'], 'auto=0') !== false, 'NetEase autoplay was enabled by default');
+assertTrue(strpos($renderedCases['bilibili bv'], 'autoplay=0') !== false, 'Bilibili autoplay was enabled by default');
+
+[$neteaseAutoplayParser, $neteaseAutoplayRenderer] = formatter([
+    'zephyrisle-formatting-pro.autoplay.netease' => '1',
+]);
+
+$neteaseAutoplayAudio = $neteaseAutoplayRenderer->render($neteaseAutoplayParser->parse($cases['audio']['url']));
+$neteaseAutoplayNetEase = $neteaseAutoplayRenderer->render($neteaseAutoplayParser->parse($cases['netease song']['url']));
+$neteaseAutoplayBilibili = $neteaseAutoplayRenderer->render($neteaseAutoplayParser->parse($cases['bilibili bv']['url']));
+
+assertTrue(
+    preg_match('/<audio[^>]*\\sautoplay(?:=|\\s|>)/i', $neteaseAutoplayAudio) === 0,
+    'enabling NetEase autoplay also enabled direct audio autoplay'
+);
+assertTrue(strpos($neteaseAutoplayNetEase, 'auto=1') !== false, 'NetEase autoplay setting was ignored');
+assertTrue(strpos($neteaseAutoplayBilibili, 'autoplay=0') !== false, 'NetEase autoplay also enabled Bilibili autoplay');
+
+[$bilibiliAutoplayParser, $bilibiliAutoplayRenderer] = formatter([
+    'zephyrisle-formatting-pro.autoplay.bilibili' => '1',
+]);
+
+$bilibiliAutoplayAudio = $bilibiliAutoplayRenderer->render($bilibiliAutoplayParser->parse($cases['audio']['url']));
+$bilibiliAutoplayNetEase = $bilibiliAutoplayRenderer->render($bilibiliAutoplayParser->parse($cases['netease song']['url']));
+$bilibiliAutoplayBilibili = $bilibiliAutoplayRenderer->render($bilibiliAutoplayParser->parse($cases['bilibili bv']['url']));
+
+assertTrue(
+    preg_match('/<audio[^>]*\\sautoplay(?:=|\\s|>)/i', $bilibiliAutoplayAudio) === 0,
+    'enabling Bilibili autoplay also enabled direct audio autoplay'
+);
+assertTrue(strpos($bilibiliAutoplayNetEase, 'auto=0') !== false, 'Bilibili autoplay also enabled NetEase autoplay');
+assertTrue(strpos($bilibiliAutoplayBilibili, 'autoplay=1') !== false, 'Bilibili autoplay setting was ignored');
+
+[$autoAudioAutoplayParser, $autoAudioAutoplayRenderer] = formatter([
+    'zephyrisle-formatting-pro.autoplay.autoaudio' => '1',
+]);
+
+$autoAudioAutoplayAudio = $autoAudioAutoplayRenderer->render($autoAudioAutoplayParser->parse($cases['audio']['url']));
+$autoAudioAutoplayNetEase = $autoAudioAutoplayRenderer->render($autoAudioAutoplayParser->parse($cases['netease song']['url']));
+$autoAudioAutoplayBilibili = $autoAudioAutoplayRenderer->render($autoAudioAutoplayParser->parse($cases['bilibili bv']['url']));
+
+assertTrue(
+    preg_match('/<audio[^>]*\\sautoplay(?:=|\\s|>)/i', $autoAudioAutoplayAudio) === 1,
+    'direct audio autoplay setting was ignored'
+);
+assertTrue(strpos($autoAudioAutoplayNetEase, 'auto=0') !== false, 'direct audio autoplay also enabled NetEase autoplay');
+assertTrue(strpos($autoAudioAutoplayBilibili, 'autoplay=0') !== false, 'direct audio autoplay also enabled Bilibili autoplay');
 
 foreach ([true, false] as $formattingProFirst) {
     [$combinedParser, $combinedRenderer] = formatterWithFoF($formattingProFirst);
@@ -166,5 +224,28 @@ assertTrue(strpos($parser->parse($ordinaryBilibiliPage), '<BILIBILI') === false,
 $malicious = 'https://cdn.example.com/file.mp3&quot; onerror=&quot;alert(1)';
 $html = $renderer->render($parser->parse($malicious));
 assertTrue(preg_match('/<audio[^>]+onerror=/i', $html) === 0, 'audio URL was able to inject an HTML attribute');
+
+$previousContainer = Container::getInstance();
+$testContainer = new Container();
+$formatterCache = new class() {
+    public bool $flushed = false;
+
+    public function flush(): void
+    {
+        $this->flushed = true;
+    }
+};
+
+$testContainer->instance('flarum.formatter', $formatterCache);
+Container::setInstance($testContainer);
+
+$cacheListener = new ClearCache();
+$cacheListener->handle(new Saved(['unrelated.setting' => '1']));
+assertTrue(! $formatterCache->flushed, 'an unrelated setting flushed the formatter cache');
+
+$cacheListener->handle(new Saved(['zephyrisle-formatting-pro.autoplay.bilibili' => '1']));
+assertTrue($formatterCache->flushed, 'changing autoplay did not flush the formatter cache');
+
+Container::setInstance($previousContainer);
 
 fwrite(STDOUT, 'Formatter integration tests passed.'.PHP_EOL);

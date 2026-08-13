@@ -1,6 +1,10 @@
 zephyrisle-formatting-pro:
   admin:
     settings:
+      autoaudio_autoplay: 尝试自动播放直链音频
+      netease_autoplay: 尝试自动播放网易云音乐
+      bilibili_autoplay: 尝试自动播放哔哩哔哩视频
+      autoplay_help: 默认关闭。浏览器仍可能在访客与网站交互前阻止有声自动播放。
       audio_css: 自定义音频 CSS
       audio_css_placeholder: "/* 在此输入音频播放器的自定义 CSS */\naudio {\n  /* 您的自定义样式 */\n}"
       audio_css_help: "输入自定义 CSS 来调整音频播放器的样式。此 CSS 将应用于论坛中的所有音频元素。"

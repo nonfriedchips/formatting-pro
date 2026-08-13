@@ -26,15 +26,15 @@ class ConfigureFormatter
     public function __invoke(Configurator $configurator): void
     {
         if ($this->enabled('autoaudio')) {
-            $this->configureAutoAudio($configurator);
+            $this->configureAutoAudio($configurator, $this->autoplayEnabled('autoaudio'));
         }
 
         if ($this->enabled('netease')) {
-            $this->configureNetEase($configurator);
+            $this->configureNetEase($configurator, $this->autoplayEnabled('netease'));
         }
 
         if ($this->enabled('bilibili')) {
-            $this->configureBilibili($configurator);
+            $this->configureBilibili($configurator, $this->autoplayEnabled('bilibili'));
         }
     }
 
@@ -45,19 +45,30 @@ class ConfigureFormatter
         return $value === true || $value === 1 || $value === '1';
     }
 
-    private function configureAutoAudio(Configurator $configurator): void
+    private function autoplayEnabled(string $plugin): bool
     {
+        $value = $this->settings->get('zephyrisle-formatting-pro.autoplay.'.$plugin, false);
+
+        return $value === true || $value === 1 || $value === '1';
+    }
+
+    private function configureAutoAudio(Configurator $configurator, bool $autoplay): void
+    {
+        $autoplayAttribute = $autoplay ? ' autoplay=""' : '';
+
         $configurator->Preg->replace(
             '#(?<src>https?://[^\\s<>"\']+\\.(?:mp3|m4a|ogg|oga|wav|flac|aac|opus)(?:[?\\#][^\\s<>"\']*)?)#i',
-            '<audio class="FormattingPro-audio" controls="" preload="metadata" src="$1">'
+            '<audio class="FormattingPro-audio" controls="" preload="metadata"'.$autoplayAttribute.' src="$1">'
                 .'<a href="$1" rel="nofollow ugc noopener">$1</a>'
                 .'</audio>',
             'AUTOAUDIO'
         );
     }
 
-    private function configureNetEase(Configurator $configurator): void
+    private function configureNetEase(Configurator $configurator, bool $autoplay): void
     {
+        $autoplayValue = $autoplay ? '1' : '0';
+
         $configurator->MediaEmbed->add('netease', [
             'host' => ['music.163.com', 'y.music.163.com'],
             'extract' => [
@@ -73,7 +84,7 @@ class ConfigureFormatter
                             'width' => 380,
                             'height' => 86,
                             'max-width' => 380,
-                            'src' => 'https://music.163.com/outchain/player?type=2&id={@id}&auto=0&height=66',
+                            'src' => 'https://music.163.com/outchain/player?type=2&id={@id}&auto='.$autoplayValue.'&height=66',
                         ],
                     ],
                     [
@@ -82,7 +93,7 @@ class ConfigureFormatter
                             'width' => 380,
                             'height' => 450,
                             'max-width' => 380,
-                            'src' => 'https://music.163.com/outchain/player?type=1&id={@id}&auto=0&height=430',
+                            'src' => 'https://music.163.com/outchain/player?type=1&id={@id}&auto='.$autoplayValue.'&height=430',
                         ],
                     ],
                 ],
@@ -91,14 +102,14 @@ class ConfigureFormatter
                         'width' => 380,
                         'height' => 450,
                         'max-width' => 380,
-                        'src' => 'https://music.163.com/outchain/player?type=0&id={@id}&auto=0&height=430',
+                        'src' => 'https://music.163.com/outchain/player?type=0&id={@id}&auto='.$autoplayValue.'&height=430',
                     ],
                 ],
             ],
         ]);
     }
 
-    private function configureBilibili(Configurator $configurator): void
+    private function configureBilibili(Configurator $configurator, bool $autoplay): void
     {
         $configurator->MediaEmbed->add('bilibili', [
             'host' => ['bilibili.com', 'www.bilibili.com', 'm.bilibili.com'],
@@ -112,32 +123,32 @@ class ConfigureFormatter
                 'when' => [
                     [
                         'test' => '@bvid and @page',
-                        'iframe' => $this->bilibiliIframe('bvid={@bvid}&p={@page}'),
+                        'iframe' => $this->bilibiliIframe('bvid={@bvid}&p={@page}', $autoplay),
                     ],
                     [
                         'test' => '@bvid',
-                        'iframe' => $this->bilibiliIframe('bvid={@bvid}'),
+                        'iframe' => $this->bilibiliIframe('bvid={@bvid}', $autoplay),
                     ],
                     [
                         'test' => '@aid and @page',
-                        'iframe' => $this->bilibiliIframe('aid={@aid}&p={@page}'),
+                        'iframe' => $this->bilibiliIframe('aid={@aid}&p={@page}', $autoplay),
                     ],
                 ],
                 'otherwise' => [
-                    'iframe' => $this->bilibiliIframe('aid={@aid}'),
+                    'iframe' => $this->bilibiliIframe('aid={@aid}', $autoplay),
                 ],
             ],
         ]);
     }
 
     /** @return array<string, int|string> */
-    private function bilibiliIframe(string $query): array
+    private function bilibiliIframe(string $query, bool $autoplay): array
     {
         return [
             'width' => 720,
             'height' => 405,
             'allow' => 'autoplay; fullscreen; picture-in-picture',
-            'src' => 'https://player.bilibili.com/player.html?isOutside=true&'.$query,
+            'src' => 'https://player.bilibili.com/player.html?isOutside=true&'.$query.'&autoplay='.($autoplay ? '1' : '0'),
         ];
     }
 }

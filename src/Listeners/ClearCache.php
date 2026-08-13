@@ -18,7 +18,10 @@ class ClearCache
     public function handle(Saved $event): void
     {
         foreach ($event->settings as $key => $setting) {
-            if (strpos($key, 'zephyrisle-formatting-pro.plugin.') === 0) {
+            if (
+                strpos($key, 'zephyrisle-formatting-pro.plugin.') === 0
+                || strpos($key, 'zephyrisle-formatting-pro.autoplay.') === 0
+            ) {
                 resolve('flarum.formatter')->flush();
 
                 return;
