@@ -60,7 +60,10 @@
         "flarum/phpstan": "^1.8"
     },
     "scripts": {
-        "test": "php -d error_reporting=22527 tests/formatter.php",
+        "test": [
+            "php -d error_reporting=22527 tests/formatter.php",
+            "php -d error_reporting=22527 tests/dark-mode.php"
+        ],
         "analyse:phpstan": "phpstan analyse",
         "clear-cache:phpstan": "phpstan clear-result-cache",
         "build:js": "cd js && npm install && npm run build"

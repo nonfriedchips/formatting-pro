@@ -5,9 +5,21 @@
   height: 40px;
   border-radius: 4px;
   margin: 10px 0;
+
+  & when (@config-dark-mode = true) {
+    color-scheme: dark;
+  }
 }
 
 .Post-body [data-s9e-mediaembed="netease"] {
   display: block;
   margin: 10px 0;
+
+  iframe {
+    & when (@config-dark-mode = true) {
+      // The cross-origin player cannot inherit forum styles. Preserve its
+      // accent hues while mapping its bright surface to a dark one.
+      filter: invert(90%) hue-rotate(180deg);
+    }
+  }
 }
