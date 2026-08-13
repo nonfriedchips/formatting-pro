@@ -18,6 +18,7 @@ FoF Formatting or remove any of its existing plugins.
   audio players.
 - Embed NetEase Cloud Music song, album, and playlist links.
 - Embed Bilibili BV and AV video links, including multi-part `p` links.
+- Configure autoplay separately for direct audio, NetEase Cloud Music, and Bilibili; all are disabled by default.
 - Add optional custom CSS from the Flarum administration panel.
 - Clear the TextFormatter cache automatically when formatter options change.
 
@@ -42,6 +43,10 @@ php flarum cache:clear
 
 Enable **Formatting Pro for Flarum 1** in the administration panel, then open
 its settings page to select the formatters you want.
+
+Direct audio, NetEase Cloud Music, and Bilibili have separate autoplay options.
+All three are disabled by default. Browsers may still block audible autoplay
+until the visitor interacts with the site, even when an autoplay option is enabled.
 
 If the package is later registered on Packagist, the first `composer config`
 command is no longer needed.

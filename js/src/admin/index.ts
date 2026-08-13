@@ -19,6 +19,24 @@ app.initializers.add('zephyrisle-formatting-pro', () => {
       type: 'boolean',
     })
     .registerSetting({
+      setting: 'zephyrisle-formatting-pro.autoplay.autoaudio',
+      label: app.translator.trans('zephyrisle-formatting-pro.admin.settings.autoaudio_autoplay'),
+      help: app.translator.trans('zephyrisle-formatting-pro.admin.settings.autoplay_help'),
+      type: 'boolean',
+    })
+    .registerSetting({
+      setting: 'zephyrisle-formatting-pro.autoplay.netease',
+      label: app.translator.trans('zephyrisle-formatting-pro.admin.settings.netease_autoplay'),
+      help: app.translator.trans('zephyrisle-formatting-pro.admin.settings.autoplay_help'),
+      type: 'boolean',
+    })
+    .registerSetting({
+      setting: 'zephyrisle-formatting-pro.autoplay.bilibili',
+      label: app.translator.trans('zephyrisle-formatting-pro.admin.settings.bilibili_autoplay'),
+      help: app.translator.trans('zephyrisle-formatting-pro.admin.settings.autoplay_help'),
+      type: 'boolean',
+    })
+    .registerSetting({
       setting: 'zephyrisle-formatting-pro.audio_css',
       label: app.translator.trans('zephyrisle-formatting-pro.admin.settings.audio_css'),
       help: app.translator.trans('zephyrisle-formatting-pro.admin.settings.audio_css_help'),

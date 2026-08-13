@@ -41,6 +41,9 @@ return [
         ->default('zephyrisle-formatting-pro.plugin.autoaudio', true)
         ->default('zephyrisle-formatting-pro.plugin.netease', true)
         ->default('zephyrisle-formatting-pro.plugin.bilibili', true)
+        ->default('zephyrisle-formatting-pro.autoplay.autoaudio', false)
+        ->default('zephyrisle-formatting-pro.autoplay.netease', false)
+        ->default('zephyrisle-formatting-pro.autoplay.bilibili', false)
         ->default('zephyrisle-formatting-pro.audio_css', ''),
 
     (new Extend\Event())

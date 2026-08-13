@@ -1,6 +1,10 @@
 zephyrisle-formatting-pro:
   admin:
     settings:
+      autoaudio_autoplay: Attempt to autoplay direct audio
+      netease_autoplay: Attempt to autoplay NetEase Cloud Music
+      bilibili_autoplay: Attempt to autoplay Bilibili videos
+      autoplay_help: Disabled by default. Browsers may still block audible autoplay until the visitor interacts with the site.
       audio_css: Custom Audio CSS
       audio_css_placeholder: "/* Enter custom CSS for audio players here */\naudio {\n  /* Your custom styles */\n}"
       audio_css_help: "Enter custom CSS to style the audio players. This CSS will be applied to all audio elements in the forum."
