@@ -43,8 +43,31 @@ function hasCssDeclaration(string $css, string $property, string $value): bool
     return preg_match($pattern, $css) === 1;
 }
 
+function hasNetEaseIframeFilter(string $css): bool
+{
+    return preg_match(
+        '~\[data-s9e-mediaembed\s*=\s*(["\']?)netease\1\s*\]\s+iframe\s*\{[^}]*(?<![-\w])filter\s*:~s',
+        $css
+    ) === 1;
+}
+
 $lightCss = compileForumCss(false);
 $darkCss = compileForumCss(true);
+
+$netEaseIframeFilterCases = [
+    'double-quoted' => '[data-s9e-mediaembed="netease"] iframe { filter: invert(90%); }',
+    'single-quoted' => "[data-s9e-mediaembed='netease'] iframe { filter : invert(90%); }",
+    'unquoted' => '[data-s9e-mediaembed = netease] iframe{filter:invert(90%);}',
+];
+
+foreach ($netEaseIframeFilterCases as $syntax => $css) {
+    assertCss(hasNetEaseIframeFilter($css), "NetEase iframe filter detector missed {$syntax} attribute syntax");
+}
+
+assertCss(
+    ! hasNetEaseIframeFilter('[data-s9e-mediaembed=netease] iframe{backdrop-filter:invert(90%);}'),
+    'NetEase iframe filter detector mistook backdrop-filter for filter'
+);
 
 assertCss(hasCssDeclaration($darkCss, 'color-scheme', 'dark'), 'direct audio did not opt into dark native controls');
 assertCss(hasCssDeclaration($darkCss, 'backdrop-filter', 'invert(90%) hue-rotate(180deg)'), 'NetEase dark mode treatment was not compiled');
@@ -52,7 +75,7 @@ assertCss(strpos($darkCss, 'iframe[src*="height=66"]') !== false, 'NetEase song 
 assertCss(strpos($darkCss, 'iframe[src*="height=430"]') !== false, 'NetEase album and playlist layouts were not targeted');
 assertCss(hasCssDeclaration($darkCss, 'border', '10px solid var(--body-bg)'), 'NetEase white iframe margin was not covered');
 assertCss(
-    preg_match('/data-s9e-mediaembed="netease"\] iframe\s*\{[^}]*\bfilter:/s', $darkCss) === 0,
+    ! hasNetEaseIframeFilter($darkCss),
     'NetEase dark mode still filters the entire iframe, including its cover'
 );
 assertCss(! hasCssDeclaration($lightCss, 'color-scheme', 'dark'), 'direct audio dark controls leaked into light mode');
