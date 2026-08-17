@@ -11,6 +11,8 @@
 
 namespace Zephyrisle\FormattingPro\Listeners;
 
+use Flarum\Frontend\Assets;
+use Flarum\Formatter\Formatter;
 use Flarum\Settings\Event\Saved;
 
 class ClearCache
@@ -22,7 +24,13 @@ class ClearCache
                 strpos($key, 'zephyrisle-formatting-pro.plugin.') === 0
                 || strpos($key, 'zephyrisle-formatting-pro.autoplay.') === 0
             ) {
-                resolve('flarum.formatter')->flush();
+                /** @var Formatter $formatter */
+                $formatter = resolve('flarum.formatter');
+                $formatter->flush();
+
+                /** @var Assets $forumAssets */
+                $forumAssets = resolve('flarum.assets.forum');
+                $forumAssets->makeJs()->flush();
 
                 return;
             }

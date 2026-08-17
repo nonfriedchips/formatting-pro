@@ -153,6 +153,13 @@ assertTrue(
 assertTrue(strpos($renderedCases['netease song'], 'auto=0') !== false, 'NetEase autoplay was enabled by default');
 assertTrue(strpos($renderedCases['bilibili bv'], 'autoplay=0') !== false, 'Bilibili autoplay was enabled by default');
 
+foreach (['netease song', 'netease album', 'netease playlist'] as $name) {
+    assertTrue(
+        strpos($renderedCases[$name], 'allow="autoplay"') !== false,
+        "{$name} did not delegate autoplay permission"
+    );
+}
+
 [$neteaseAutoplayParser, $neteaseAutoplayRenderer] = formatter([
     'zephyrisle-formatting-pro.autoplay.netease' => '1',
 ]);
@@ -235,16 +242,46 @@ $formatterCache = new class() {
         $this->flushed = true;
     }
 };
+$forumJsCache = new class() {
+    public bool $flushed = false;
+
+    public function flush(): void
+    {
+        $this->flushed = true;
+    }
+};
+$forumAssets = new class($forumJsCache) {
+    private object $js;
+
+    public function __construct(object $js)
+    {
+        $this->js = $js;
+    }
+
+    public function makeJs(): object
+    {
+        return $this->js;
+    }
+};
 
 $testContainer->instance('flarum.formatter', $formatterCache);
+$testContainer->instance('flarum.assets.forum', $forumAssets);
 Container::setInstance($testContainer);
 
 $cacheListener = new ClearCache();
 $cacheListener->handle(new Saved(['unrelated.setting' => '1']));
 assertTrue(! $formatterCache->flushed, 'an unrelated setting flushed the formatter cache');
+assertTrue(! $forumJsCache->flushed, 'an unrelated setting flushed the forum JS cache');
 
 $cacheListener->handle(new Saved(['zephyrisle-formatting-pro.autoplay.bilibili' => '1']));
 assertTrue($formatterCache->flushed, 'changing autoplay did not flush the formatter cache');
+assertTrue($forumJsCache->flushed, 'changing autoplay did not flush the forum JS cache');
+
+$formatterCache->flushed = false;
+$forumJsCache->flushed = false;
+$cacheListener->handle(new Saved(['zephyrisle-formatting-pro.plugin.netease' => '0']));
+assertTrue($formatterCache->flushed, 'changing a plugin did not flush the formatter cache');
+assertTrue($forumJsCache->flushed, 'changing a plugin did not flush the forum JS cache');
 
 Container::setInstance($previousContainer);
 

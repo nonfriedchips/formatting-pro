@@ -19,6 +19,8 @@ FoF Formatting or remove any of its existing plugins.
 - Embed NetEase Cloud Music song, album, and playlist links.
 - Embed Bilibili BV and AV video links, including multi-part `p` links.
 - Configure autoplay separately for direct audio, NetEase Cloud Music, and Bilibili; all are disabled by default.
+- Adapt NetEase embeds and direct audio controls to Flarum dark mode, including
+  dynamic theme switching provided by FoF Night Mode.
 - Add optional custom CSS from the Flarum administration panel.
 - Clear the TextFormatter cache automatically when formatter options change.
 
