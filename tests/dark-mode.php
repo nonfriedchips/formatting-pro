@@ -70,6 +70,10 @@ assertCss(
     'NetEase iframe filter detector mistook backdrop-filter for filter'
 );
 
+assertCss(
+    preg_match('/(?<![-\\w]):where\\(\\.Post-body\\s+\\.FormattingPro-audio\\)\\s*\\{/', $lightCss) === 1,
+    'direct audio defaults are not wrapped in a zero-specificity selector'
+);
 assertCss(hasCssDeclaration($darkCss, 'color-scheme', 'dark'), 'direct audio did not opt into dark native controls');
 assertCss(hasCssDeclaration($darkCss, 'backdrop-filter', 'invert(90%) hue-rotate(180deg)'), 'NetEase dark mode treatment was not compiled');
 assertCss(strpos($darkCss, 'iframe[src*="height=66"]') !== false, 'NetEase song layout was not targeted');
