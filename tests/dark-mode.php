@@ -46,7 +46,7 @@ function hasCssDeclaration(string $css, string $property, string $value): bool
 function hasNetEaseIframeFilter(string $css): bool
 {
     return preg_match(
-        '~\[data-s9e-mediaembed\s*=\s*(["\']?)netease\1\s*\]\s+iframe\s*\{[^}]*(?<![-\w])filter\s*:~s',
+        '~\[data-s9e-mediaembed\s*=\s*(["\']?)netease\1\s*\](?:\s+|\s*>\s*)iframe\s*\{[^}]*(?<![-\w])filter\s*:~s',
         $css
     ) === 1;
 }
@@ -58,10 +58,11 @@ $netEaseIframeFilterCases = [
     'double-quoted' => '[data-s9e-mediaembed="netease"] iframe { filter: invert(90%); }',
     'single-quoted' => "[data-s9e-mediaembed='netease'] iframe { filter : invert(90%); }",
     'unquoted' => '[data-s9e-mediaembed = netease] iframe{filter:invert(90%);}',
+    'child-combinator' => '[data-s9e-mediaembed=netease]>iframe{filter:invert(90%);}',
 ];
 
-foreach ($netEaseIframeFilterCases as $syntax => $css) {
-    assertCss(hasNetEaseIframeFilter($css), "NetEase iframe filter detector missed {$syntax} attribute syntax");
+foreach ($netEaseIframeFilterCases as $case => $css) {
+    assertCss(hasNetEaseIframeFilter($css), "NetEase iframe filter detector missed {$case} case");
 }
 
 assertCss(

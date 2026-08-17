@@ -69,7 +69,7 @@
         "build:js": "cd js && npm install && npm run build"
     },
     "scripts-descriptions": {
-        "test": "Run formatter integration tests",
+        "test": "Run formatter and stylesheet integration tests",
         "analyse:phpstan": "Run static analysis",
         "build:js": "Build JavaScript assets"
     }
